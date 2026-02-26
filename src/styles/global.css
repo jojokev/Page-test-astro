@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+@layer base {
+  @font-face {
+    font-family: "Poppins";
+    src: url("../assets/font/Poppins-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Poppins";
+    src: url("../assets/font/Poppins-Medium.ttf") format("truetype");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Poppins";
+    src: url("../assets/font/Poppins-SemiBold.ttf") format("truetype");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Poppins";
+    src: url("../assets/font/Poppins-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Poppins";
+    src: url("../assets/font/Poppins-ExtraBold.ttf") format("truetype");
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+  }
+}
+
+@theme {
+  --font-sans: "Poppins", sans-serif;
+  --color-primary: #eb0000;
+  --text-title: #111827;
+  --text-itinerary: #374151;
+}
+
+@layer base {
+  .text-page h2,
+  .text-page h3,
+  .text-page h4,
+  .text-page h5 {
+    color: var(--text-title);
+    font-weight: 600;
+    line-height: 1.25;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .text-page h2 {
+    font-size: 2rem;
+  }
+
+  .text-page h3 {
+    font-size: 1.5rem;
+  }
+
+  .text-page h4 {
+    font-size: 1.25rem;
+  }
+
+  .text-page h5 {
+    font-size: 1.125rem;
+  }
+
+  .text-page p {
+    color: var(--text-itinerary);
+    font-size: 1rem;
+    line-height: 1.75;
+    margin-bottom: 1rem;
+  }
+
+  .text-page a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .text-page a:hover {
+    color: rgba(var(--color-primary), 1);
+  }
+
+  .text-page ul {
+    list-style: disc;
+    margin-bottom: 1rem;
+    margin-left: 1.25rem;
+    padding-left: 0.5rem;
+  }
+
+  .text-page li {
+    color: var(--text-itinerary);
+    line-height: 1.75;
+    margin-bottom: 0.5rem;
+  }
+}

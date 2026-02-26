@@ -1,0 +1,109 @@
+---
+import defaultImage from "../assets/default.webp";
+import "glightbox/dist/css/glightbox.min.css";
+
+const galleryImages = [
+  { src: defaultImage.src, alt: "Gallery main", className: "h-[520px] w-full object-cover" },
+  { src: defaultImage.src, alt: "Gallery photo 1", className: "h-[250px] w-full object-cover" },
+  { src: defaultImage.src, alt: "Gallery photo 2", className: "h-[250px] w-full object-cover" },
+  { src: defaultImage.src, alt: "Gallery photo 3", className: "h-[250px] w-full object-cover" },
+  { src: defaultImage.src, alt: "Gallery photo 4", className: "h-[250px] w-full object-cover" },
+];
+---
+
+<section class="container mx-auto px-2">
+  <div class="grid grid-cols-1 gap-4 lg:grid-cols-[650px_1fr]">
+    <div class="overflow-hidden rounded-lg">
+      <a href={galleryImages[0].src} class="glightbox-tour block" data-gallery="tour-gallery" aria-label={`Open ${galleryImages[0].alt}`}>
+        <img
+          src={galleryImages[0].src}
+          alt={galleryImages[0].alt}
+          class={galleryImages[0].className}
+          loading="lazy"
+        />
+      </a>
+    </div>
+
+    <div class="relative grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div class="overflow-hidden rounded-lg">
+        <a href={galleryImages[1].src} class="glightbox-tour block" data-gallery="tour-gallery" aria-label={`Open ${galleryImages[1].alt}`}>
+          <img
+            src={galleryImages[1].src}
+            alt={galleryImages[1].alt}
+            class={galleryImages[1].className}
+            loading="lazy"
+          />
+        </a>
+      </div>
+
+      <div class="overflow-hidden rounded-lg">
+        <a href={galleryImages[2].src} class="glightbox-tour block" data-gallery="tour-gallery" aria-label={`Open ${galleryImages[2].alt}`}>
+          <img
+            src={galleryImages[2].src}
+            alt={galleryImages[2].alt}
+            class={galleryImages[2].className}
+            loading="lazy"
+          />
+        </a>
+      </div>
+
+      <div class="overflow-hidden rounded-lg">
+        <a href={galleryImages[3].src} class="glightbox-tour block" data-gallery="tour-gallery" aria-label={`Open ${galleryImages[3].alt}`}>
+          <img
+            src={galleryImages[3].src}
+            alt={galleryImages[3].alt}
+            class={galleryImages[3].className}
+            loading="lazy"
+          />
+        </a>
+      </div>
+
+      <div class="overflow-hidden rounded-lg">
+        <a href={galleryImages[4].src} class="glightbox-tour block" data-gallery="tour-gallery" aria-label={`Open ${galleryImages[4].alt}`}>
+          <img
+            src={galleryImages[4].src}
+            alt={galleryImages[4].alt}
+            class={galleryImages[4].className}
+            loading="lazy"
+          />
+        </a>
+      </div>
+
+      <a
+        href={galleryImages[0].src}
+        id="open-tour-gallery"
+        class="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-xl bg-primary px-3 py-2 text-base font-medium text-white"
+        aria-label="View photos"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          class="h-4 w-4"
+          aria-hidden="true"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h3l1.5-2h7L17 7h3v12H4V7Zm8 9a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
+        </svg>
+        <span>Photos</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  import GLightbox from "glightbox";
+
+  const lightbox = GLightbox({
+    selector: ".glightbox-tour",
+    touchNavigation: true,
+    loop: true,
+  });
+
+  const openButton = document.getElementById("open-tour-gallery");
+  openButton?.addEventListener("click", (event) => {
+    event.preventDefault();
+    lightbox.openAt(0);
+  });
+</script>

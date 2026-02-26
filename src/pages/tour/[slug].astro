@@ -1,0 +1,564 @@
+---
+import type { GetStaticPaths } from "astro";
+import Layout from "../../layouts/layout.astro";
+import GalleryTour from "../../components/GalleryTour.astro";
+import defaultImage from "../../assets/default.webp";
+
+interface tourSlug{
+  slug: String
+}
+
+export const getStaticPaths = (async () => {
+  const res = await fetch("https://69explorer.com/wp-json/wp/v2/tour?per_page=10&_fields=slug")
+  const data = await res.json()
+  return data.map((tour:tourSlug)=>(
+    {params: {slug: tour.slug}}
+  ))
+}) satisfies GetStaticPaths;
+
+const {slug} = Astro.params
+
+const res = await fetch(`https://69explorer.com/wp-json/wp/v2/tour?slug=${slug}&_fields=id,title,content`)
+const [data] = await res.json()
+
+---
+
+<Layout title="Tour">
+  <!-- Gallery Tour -->
+  <GalleryTour></GalleryTour>
+
+  <!-- Title Tour -->
+  <section class="pt-8">
+    <div class="container mx-auto px-2">
+      <div class="flex flex-col items-start gap-8 text-black">
+        <h2 class="w-full text-[36px] font-semibold leading-[34px]" set:html={data.title.rendered}></h2>
+        <div class="text-page">
+          <p>
+            Embárcate en una aventura única hacia la Laguna Humantay, ubicada a 3,880 metros de altitud.
+            Explora sus cristalinas aguas rodeadas de imponentes montañas, conecta con la tradición andina y
+            disfruta de paisajes naturales únicos. <a href="#">Enlace</a> Este viaje es perfecto para quienes buscan escapar del
+            bullicio de la ciudad y respirar la pureza de los Andes.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Two columns layout -->
+  <section class="py-8">
+    <div class="container mx-auto px-2">
+      <div class="grid grid-cols-1 items-start gap-8 xl:grid-cols-[minmax(0,100%)_400px] xl:justify-between">
+        <!-- Column Left -->
+        <div class="w-full" data-column="itinerary">
+          <section class="flex w-full flex-col items-start gap-4 text-[16px] tracking-[0.2px]">
+            <h2 class="w-full text-[24px] font-semibold leading-5 text-[var(--color-primary)]">Datos importantes</h2>
+            <ul class="w-full list-disc space-y-0 pl-5 text-black">
+              <li class="text-[16px] leading-6"><span class="font-medium leading-5 tracking-[0.2px]">Duración:</span><span> 2 Días / 1 Noche</span></li>
+              <li class="text-[16px] leading-6"><span class="font-medium leading-5 tracking-[0.2px]">Tipo de tour:</span><span> Trekking</span></li>
+              <li class="text-[16px] leading-6"><span class="font-medium leading-5 tracking-[0.2px]">Idioma:</span><span> Inglés y Español</span></li>
+              <li class="text-[16px] leading-6"><span class="font-medium leading-5 tracking-[0.2px]">Tipo de servicio:</span><span> Privado</span></li>
+              <li class="text-[16px] leading-6"><span class="font-medium leading-5 tracking-[0.2px]">Lugar de finalización:</span><span> De retorno los dejamos en su hotel</span></li>
+            </ul>
+          </section>
+
+          <section class="mt-10 flex w-full flex-col gap-4" data-tabs-root>
+            <div class="flex w-full flex-wrap items-stretch gap-2 md:gap-3" role="tablist" aria-label="Información del tour">
+              <button
+                type="button"
+                role="tab"
+                aria-selected="true"
+                data-tab-button
+                data-tab-target="tab-itinerario"
+                class="cursor-pointer inline-flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-[8px] border border-[var(--color-primary)] bg-[var(--color-primary)] px-4 py-3 text-[16px] font-medium leading-5 tracking-[0.2px] text-white md:px-6"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                <span>Itinerario</span>
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected="false"
+                data-tab-button
+                data-tab-target="tab-incluye"
+                class="cursor-pointer inline-flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-[8px] border border-[#ccc] bg-white px-4 py-3 text-[16px] font-medium leading-5 tracking-[0.2px] text-black md:px-6"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h11M9 6h11M9 18h11M3 6h.01M3 12h.01M3 18h.01" />
+                </svg>
+                <span>Incluye / No incluye</span>
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected="false"
+                data-tab-button
+                data-tab-target="tab-recomendaciones"
+                class="cursor-pointer inline-flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-[8px] border border-[#ccc] bg-white px-4 py-3 text-[16px] font-medium leading-5 tracking-[0.2px] text-black md:px-6"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m12 17.3-5.2 2.7 1-5.7-4.1-4 5.7-.8L12 4l2.6 5.5 5.7.8-4.1 4 1 5.7Z" />
+                </svg>
+                <span>Recomendaciones</span>
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected="false"
+                data-tab-button
+                data-tab-target="tab-informacion"
+                class="cursor-pointer inline-flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-[8px] border border-[#ccc] bg-white px-4 py-3 text-[16px] font-medium leading-5 tracking-[0.2px] text-black md:px-6"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 7h.01" />
+                </svg>
+                <span>Información</span>
+              </button>
+            </div>
+
+            <div id="tab-itinerario" data-tab-panel class="w-full rounded-[8px] border border-[#ccc] p-6">
+              <div class="text-page">
+                <h2>Itinerario</h2>
+                <h3>Día 1: City Tour Lima</h3>
+                <ul>
+                  <li>Recepción en el aeropuerto de Lima y traslado al hotel seleccionado.</li>
+                  <li>Transporte privado.</li>
+                  <li>CITY TOUR LIMA (tarde) hora de recojo 2.00 pm</li>
+                  <li>Noche en hotel seleccionado. Lima</li>
+                </ul>
+                <h3>Día 2: Tour Full Day Paracas + Ica</h3>
+                <ul>
+                  <li>Recepción en el aeropuerto de Lima y traslado al hotel seleccionado.</li>
+                  <li>Transporte privado.</li>
+                  <li>CITY TOUR LIMA (tarde) hora de recojo 2.00 pm</li>
+                  <li>Noche en hotel seleccionado. Lima</li>
+                </ul>
+              </div>
+            </div>
+
+            <div id="tab-incluye" data-tab-panel class="hidden w-full rounded-[8px] border border-[#ccc] p-6">
+              <div class="text-page">
+                <h2>Itinerario 2</h2>
+                <h3>Día 1: City Tour Lima</h3>
+                <ul>
+                  <li>Recepción en el aeropuerto de Lima y traslado al hotel seleccionado.</li>
+                  <li>Transporte privado.</li>
+                  <li>CITY TOUR LIMA (tarde) hora de recojo 2.00 pm</li>
+                  <li>Noche en hotel seleccionado. Lima</li>
+                </ul>
+                <h3>Día 2: Tour Full Day Paracas + Ica</h3>
+                <ul>
+                  <li>Recepción en el aeropuerto de Lima y traslado al hotel seleccionado.</li>
+                  <li>Transporte privado.</li>
+                  <li>CITY TOUR LIMA (tarde) hora de recojo 2.00 pm</li>
+                  <li>Noche en hotel seleccionado. Lima</li>
+                </ul>
+              </div>
+            </div>
+
+            <div id="tab-recomendaciones" data-tab-panel class="hidden w-full rounded-[8px] border border-[#ccc] p-6">
+              <div class="text-page">
+                <h2>Itinerario 3</h2>
+                <h3>Día 1: City Tour Lima</h3>
+                <ul>
+                  <li>Recepción en el aeropuerto de Lima y traslado al hotel seleccionado.</li>
+                  <li>Transporte privado.</li>
+                  <li>CITY TOUR LIMA (tarde) hora de recojo 2.00 pm</li>
+                  <li>Noche en hotel seleccionado. Lima</li>
+                </ul>
+                <h3>Día 2: Tour Full Day Paracas + Ica</h3>
+                <ul>
+                  <li>Recepción en el aeropuerto de Lima y traslado al hotel seleccionado.</li>
+                  <li>Transporte privado.</li>
+                  <li>CITY TOUR LIMA (tarde) hora de recojo 2.00 pm</li>
+                  <li>Noche en hotel seleccionado. Lima</li>
+                </ul>
+              </div>
+            </div>
+
+            <div id="tab-informacion" data-tab-panel class="hidden w-full rounded-[8px] border border-[#ccc] p-6">
+              <div class="text-page">
+                <h2>Itinerario 4</h2>
+                <h3>Día 1: City Tour Lima</h3>
+                <ul>
+                  <li>Recepción en el aeropuerto de Lima y traslado al hotel seleccionado.</li>
+                  <li>Transporte privado.</li>
+                  <li>CITY TOUR LIMA (tarde) hora de recojo 2.00 pm</li>
+                  <li>Noche en hotel seleccionado. Lima</li>
+                </ul>
+                <h3>Día 2: Tour Full Day Paracas + Ica</h3>
+                <ul>
+                  <li>Recepción en el aeropuerto de Lima y traslado al hotel seleccionado.</li>
+                  <li>Transporte privado.</li>
+                  <li>CITY TOUR LIMA (tarde) hora de recojo 2.00 pm</li>
+                  <li>Noche en hotel seleccionado. Lima</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Column Right -->
+        <div class="w-full space-y-8 xl:max-w-[400px]" data-column="sidebar">
+          <section class="w-full rounded-[8px] border border-[#ccc] p-4">
+            <p class="mx-auto max-w-[295px] text-center text-[16px] font-semibold leading-5 tracking-[0.2px] text-black">
+              Tour Catarata de Pillones y bosque de piedras
+            </p>
+            <div class="flex w-full items-center justify-center py-4">
+              <div class="flex items-end justify-center gap-1">
+                <span class="text-[14px] leading-[22px] tracking-[0.2px] text-[rgba(80,80,80,0.87)]">Desde</span>
+                <span class="text-[24px] font-bold leading-[28px] text-black">$135.00</span>
+                <span class="text-[14px] leading-[22px] tracking-[0.2px] text-[rgba(80,80,80,0.87)]">/per person</span>
+              </div>
+            </div>
+            <div class="mb-2 flex items-center justify-center gap-4">
+              <div class="flex items-center gap-2 text-black">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 20 18" fill="none">
+                  <path d="M0.915433 14.709C0.409821 14.709 0 15.0521 0 15.4751V17.234C0 17.657 0.409821 18 0.915433 18C1.42097 18 1.83087 17.657 1.83087 17.234V15.4751C1.83087 15.0521 1.4209 14.709 0.915433 14.709Z" fill="black"/>
+                  <path d="M5.30954 11.0317C4.804 11.0317 4.3941 11.3748 4.3941 11.7978V17.2339C4.3941 17.6569 4.804 18 5.30954 18C5.81508 18 6.22497 17.6569 6.22497 17.2339V11.7978C6.22497 11.3748 5.815 11.0317 5.30954 11.0317Z" fill="black"/>
+                  <path d="M9.70358 7.35449C9.19804 7.35449 8.78815 7.69752 8.78815 8.12058V17.234C8.78815 17.6571 9.19804 18 9.70358 18C10.209 18 10.619 17.6571 10.619 17.234V8.12058C10.619 7.69752 10.209 7.35449 9.70358 7.35449Z" fill="black"/>
+                  <path d="M14.0977 3.67725C13.5921 3.67725 13.1823 4.02027 13.1823 4.44334V17.234C13.1823 17.657 13.5921 18 14.0977 18C14.6032 18 15.0131 17.657 15.0131 17.234V4.44334C15.0131 4.02027 14.6032 3.67725 14.0977 3.67725Z" fill="black"/>
+                  <path d="M18.4917 0C17.9862 0 17.5763 0.343025 17.5763 0.76609V17.234C17.5763 17.657 17.9862 18 18.4917 18C18.9973 18 19.4072 17.657 19.4072 17.234V0.76609C19.4072 0.343025 18.9973 0 18.4917 0Z" fill="black"/>
+                </svg>
+                <span class="text-[16px] leading-6 tracking-[0.2px]">Moderado</span>
+              </div>
+              <div class="flex items-center gap-2 text-black">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <path d="M10.6364 9.81818C10.64 10.0948 10.679 10.3697 10.7525 10.6364H7.24745C7.321 10.3697 7.36004 10.0948 7.36364 9.81818H10.6364ZM7.77273 6.54545H10.2273C10.5339 6.54656 10.8363 6.61697 11.1119 6.75143C11.3875 6.88589 11.6291 7.08091 11.8186 7.32191C12.0278 7.1445 12.2584 6.99414 12.5051 6.87436C12.2405 6.51947 11.8969 6.23106 11.5016 6.03196C11.1062 5.83286 10.6699 5.72854 10.2273 5.72727H7.77273C7.33007 5.72854 6.89378 5.83286 6.49842 6.03196C6.10306 6.23106 5.75949 6.51947 5.49491 6.87436C5.74189 6.99408 5.97281 7.14444 6.18218 7.32191C6.37167 7.08102 6.61315 6.88606 6.88857 6.75161C7.16399 6.61715 7.46624 6.54668 7.77273 6.54545ZM6.54545 2.45455C6.54545 1.96908 6.68941 1.49452 6.95912 1.09087C7.22883 0.687226 7.61218 0.372621 8.06069 0.186842C8.5092 0.00106351 9.00272 -0.0475447 9.47886 0.0471645C9.95499 0.141874 10.3924 0.375646 10.7356 0.718921C11.0789 1.0622 11.3127 1.49955 11.4074 1.97569C11.5021 2.45182 11.4535 2.94535 11.2677 3.39386C11.0819 3.84237 10.7673 4.22572 10.3637 4.49543C9.96002 4.76514 9.48546 4.90909 9 4.90909C8.34921 4.90844 7.72527 4.64963 7.26509 4.18945C6.80492 3.72928 6.5461 3.10533 6.54545 2.45455ZM7.36364 2.45455C7.36364 2.77819 7.45961 3.09456 7.63941 3.36366C7.81922 3.63276 8.07478 3.8425 8.37379 3.96635C8.6728 4.0902 9.00181 4.12261 9.31924 4.05947C9.63666 3.99633 9.92823 3.84048 10.1571 3.61163C10.3859 3.38278 10.5418 3.09121 10.6049 2.77379C10.6681 2.45636 10.6357 2.12734 10.5118 1.82834C10.3879 1.52933 10.1782 1.27377 9.90911 1.09396C9.64002 0.914154 9.32364 0.818183 9 0.818183C8.56614 0.818616 8.15018 0.991157 7.84339 1.29794C7.53661 1.60472 7.36407 2.02069 7.36364 2.45455ZM2.86364 13.0909H5.31818C6.0774 13.0918 6.80527 13.3938 7.34212 13.9306C7.87897 14.4675 8.18095 15.1953 8.18182 15.9545V18H0V15.9545C0.000866193 15.1953 0.302848 14.4675 0.839696 13.9306C1.37654 13.3938 2.10442 13.0918 2.86364 13.0909ZM2.86364 13.9091C2.32135 13.9097 1.80146 14.1255 1.418 14.5089C1.03454 14.8924 0.818831 15.4123 0.818182 15.9545V17.1818H7.36364V15.9545C7.36299 15.4123 7.14728 14.8924 6.76382 14.5089C6.38036 14.1255 5.86047 13.9097 5.31818 13.9091H2.86364ZM4.09091 12.2727C3.60545 12.2727 3.13088 12.1288 2.72724 11.8591C2.32359 11.5894 2.00898 11.206 1.8232 10.7575C1.63743 10.309 1.58882 9.81546 1.68353 9.33932C1.77824 8.86319 2.01201 8.42583 2.35528 8.08256C2.69856 7.73928 3.13592 7.50551 3.61205 7.4108C4.08819 7.31609 4.58171 7.3647 5.03022 7.55048C5.47873 7.73626 5.86208 8.05086 6.13179 8.45451C6.4015 8.85816 6.54545 9.33272 6.54545 9.81818C6.5448 10.469 6.28599 11.0929 5.82582 11.5531C5.36564 12.0133 4.7417 12.2721 4.09091 12.2727ZM4.09091 11.4545C4.41455 11.4545 4.73093 11.3586 5.00002 11.1788C5.26912 10.999 5.47886 10.7434 5.60271 10.4444C5.72656 10.1454 5.75897 9.81637 5.69583 9.49894C5.63269 9.18152 5.47684 8.88995 5.24799 8.6611C5.01914 8.43225 4.72757 8.2764 4.41015 8.21326C4.09272 8.15012 3.76371 8.18253 3.4647 8.30638C3.16569 8.43023 2.91013 8.63997 2.73032 8.90907C2.55052 9.17817 2.45455 9.49454 2.45455 9.81818C2.45498 10.252 2.62752 10.668 2.9343 10.9748C3.24109 11.2816 3.65705 11.4541 4.09091 11.4545ZM18 15.9545V18H9.81818V15.9545C9.81905 15.1953 10.121 14.4675 10.6579 13.9306C11.1947 13.3938 11.9226 13.0918 12.6818 13.0909H15.1364C15.8956 13.0918 16.6235 13.3938 17.1603 13.9306C17.6972 14.4675 17.9991 15.1953 18 15.9545ZM17.1818 15.9545C17.1812 15.4123 16.9655 14.8924 16.582 14.5089C16.1985 14.1255 15.6787 13.9097 15.1364 13.9091H12.6818C12.1395 13.9097 11.6196 14.1255 11.2362 14.5089C10.8527 14.8924 10.637 15.4123 10.6364 15.9545V17.1818H17.1818V15.9545ZM16.3636 9.81818C16.3636 10.3036 16.2197 10.7782 15.95 11.1819C15.6803 11.5855 15.2969 11.9001 14.8484 12.0859C14.3999 12.2717 13.9064 12.3203 13.4302 12.2256C12.9541 12.1309 12.5167 11.8971 12.1735 11.5538C11.8302 11.2105 11.5964 10.7732 11.5017 10.297C11.407 9.8209 11.4556 9.32738 11.6414 8.87887C11.8272 8.43036 12.1418 8.04701 12.5454 7.7773C12.9491 7.50759 13.4236 7.36364 13.9091 7.36364C14.5599 7.36429 15.1838 7.6231 15.644 8.08327C16.1042 8.54345 16.363 9.1674 16.3636 9.81818ZM15.5455 9.81818C15.5455 9.49454 15.4495 9.17817 15.2697 8.90907C15.0899 8.63997 14.8343 8.43023 14.5353 8.30638C14.2363 8.18253 13.9073 8.15012 13.5899 8.21326C13.2724 8.2764 12.9809 8.43225 12.752 8.6611C12.5232 8.88995 12.3673 9.18152 12.3042 9.49894C12.241 9.81637 12.2734 10.1454 12.3973 10.4444C12.5211 10.7434 12.7309 10.999 13 11.1788C13.2691 11.3586 13.5854 11.4545 13.9091 11.4545C14.3429 11.4541 14.7589 11.2816 15.0657 10.9748C15.3725 10.668 15.545 10.252 15.5455 9.81818Z" fill="black"/>
+                </svg>
+                <span class="text-[16px] leading-6 tracking-[0.2px]">12 people</span>
+              </div>
+            </div>
+            <a id="open-booking-dialog" href="#" class="mt-2 inline-flex w-full items-center justify-center gap-1 rounded-[4px] bg-[var(--color-primary)] px-3 py-2 text-[16px] font-medium leading-5 tracking-[0.2px] text-white">
+              Booking Now
+            </a>
+          </section>
+
+          <section class="w-full rounded-[8px] bg-[rgba(255,243,219,0.71)] p-4">
+            <h3 class="text-[20px] font-semibold leading-5 tracking-[0.2px] text-[var(--color-primary)] mb-6">¿Por qué reservar con nosotros?</h3>
+            <ul class="space-y-2">
+              <li class="flex items-center gap-2 px-1 text-[16px] leading-6 tracking-[0.2px] text-black"><span>✓</span><span>Brindamos asesoría personalizada.</span></li>
+              <li class="flex items-center gap-2 px-1 text-[16px] leading-6 tracking-[0.2px] text-black"><span>✓</span><span>Manejamos grupos de todos los tamaños.</span></li>
+              <li class="flex items-center gap-2 px-1 text-[16px] leading-6 tracking-[0.2px] text-black"><span>✓</span><span>Ofrecemos diferentes opciones de trenes.</span></li>
+              <li class="flex items-center gap-2 px-1 text-[16px] leading-6 tracking-[0.2px] text-black"><span>✓</span><span>Ofrecemos diferentes opciones de trenes.</span></li>
+            </ul>
+            <div class="mt-4 space-y-2 border-t border-[rgba(0,0,0,0.08)] pt-3">
+              <p class="mb-2 text-[14px]">Tienes alguna consulta?</p>
+              <a href="#" class="bg-white inline-flex items-center gap-1 text-[14px] font-medium text-[var(--color-itinerary)] hover:opacity-80 px-2 py-1 rounded-md">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16v12H4z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m4 7 8 6 8-6" />
+                </svg>
+                <span>info@company.com</span>
+              </a>
+              <a href="#" class="bg-white inline-flex items-center gap-1 text-[14px] font-medium text-[var(--color-itinerary)] hover:opacity-80 px-2 py-1 rounded-md">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor" aria-hidden="true">
+                  <path d="M19.11 4.89A9.94 9.94 0 0 0 12.03 2C6.5 2 2 6.48 2 12c0 1.77.47 3.5 1.36 5.02L2 22l5.13-1.34A9.95 9.95 0 0 0 12.03 22C17.56 22 22 17.52 22 12c0-2.67-1.04-5.18-2.89-7.11ZM12.03 20.2a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.04.79.81-2.96-.2-.31A8.18 8.18 0 1 1 12.03 20.2Zm4.5-6.13c-.25-.13-1.47-.73-1.7-.81-.23-.09-.4-.13-.57.13-.16.25-.65.81-.79.98-.15.17-.29.19-.54.06-.25-.13-1.05-.39-1.99-1.24-.73-.65-1.23-1.46-1.37-1.71-.14-.25-.01-.39.11-.52.11-.11.25-.29.38-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.57-1.38-.78-1.89-.2-.49-.41-.42-.57-.43h-.49c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.09s.9 2.42 1.03 2.59c.13.17 1.77 2.7 4.29 3.79.6.26 1.06.42 1.42.54.6.19 1.15.16 1.59.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.16-.48-.29Z" />
+                </svg>
+                <span>Ejecutivo de ventas</span>
+              </a>
+            </div>
+          </section>
+
+          <section class="mb-4 w-full rounded-lg border border-[#ddd] bg-white p-4">
+            <h3 class="mb-3 text-[1.5rem] font-semibold leading-tight text-black">Tours Similares</h3>
+
+            <div>
+              <article class="mb-2 flex border-b border-dashed border-[#ddd] pb-2">
+                <a href="#" class="w-[30%]">
+                  <img src={defaultImage.src} alt="Montaña 7 colores" class="h-full w-full rounded object-cover" loading="lazy" />
+                </a>
+                <a href="#" class="w-[70%] p-1 pl-2">
+                  <h4 class="mb-1 text-[1.05rem] font-medium text-black">Montaña 7 colores</h4>
+                  <p class="text-[0.85rem] text-black">Full Day</p>
+                  <p class="text-[0.85rem] text-black">Desde $50</p>
+                </a>
+              </article>
+
+              <article class="mb-2 flex border-b border-dashed border-[#ddd] pb-2">
+                <a href="#" class="w-[30%]">
+                  <img src={defaultImage.src} alt="Laguna Humantay" class="h-full w-full rounded object-cover" loading="lazy" />
+                </a>
+                <a href="#" class="w-[70%] p-1 pl-2">
+                  <h4 class="mb-1 text-[1.05rem] font-medium text-black">Laguna Humantay</h4>
+                  <p class="text-[0.85rem] text-black">Full Day</p>
+                  <p class="text-[0.85rem] text-black">Desde $50</p>
+                </a>
+              </article>
+
+              <article class="mb-2 flex border-b border-dashed border-[#ddd] pb-2">
+                <a href="#" class="w-[30%]">
+                  <img src={defaultImage.src} alt="City Tour Cusco" class="h-full w-full rounded object-cover" loading="lazy" />
+                </a>
+                <a href="#" class="w-[70%] p-1 pl-2">
+                  <h4 class="mb-1 text-[1.05rem] font-medium text-black">City Tour Cusco</h4>
+                  <p class="text-[0.85rem] text-black">Full Day</p>
+                  <p class="text-[0.85rem] text-black">Desde $20</p>
+                </a>
+              </article>
+
+              <article class="mb-2 flex border-b border-dashed border-[#ddd] pb-2">
+                <a href="#" class="w-[30%]">
+                  <img src={defaultImage.src} alt="Valle Sagrado Tradicional" class="h-full w-full rounded object-cover" loading="lazy" />
+                </a>
+                <a href="#" class="w-[70%] p-1 pl-2">
+                  <h4 class="mb-1 text-[1.05rem] font-medium text-black">Valle Sagrado Tradicional</h4>
+                  <p class="text-[0.85rem] text-black">4 Horas</p>
+                  <p class="text-[0.85rem] text-black">Desde $40</p>
+                </a>
+              </article>
+
+              <article class="flex border-b border-dashed border-[#ddd] pb-2 last:border-none last:pb-0">
+                <a href="#" class="w-[30%]">
+                  <img src={defaultImage.src} alt="Valle Sagrado Vip" class="h-full w-full rounded object-cover" loading="lazy" />
+                </a>
+                <a href="#" class="w-[70%] p-1 pl-2">
+                  <h4 class="mb-1 text-[1.05rem] font-medium text-black">Valle Sagrado Vip</h4>
+                  <p class="text-[0.85rem] text-black">10 horas</p>
+                  <p class="text-[0.85rem] text-black">Desde $47</p>
+                </a>
+              </article>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <dialog id="booking-dialog" class="booking-dialog">
+    <div class="booking-dialog__header">
+      <h3>Book This Tour</h3>
+      <button type="button" id="close-booking-dialog" class="booking-dialog__close" aria-label="Close dialog">×</button>
+    </div>
+
+    <form class="booking-form" method="dialog">
+      <label for="booking-tour">Tour</label>
+      <input id="booking-tour" name="tour" type="text" value="Tour Catarata de Pillones y bosque de piedras" readonly />
+
+      <label for="booking-name">Name</label>
+      <input id="booking-name" name="name" type="text" placeholder="Your name" required />
+
+      <label for="booking-email">Email</label>
+      <input id="booking-email" name="email" type="email" placeholder="you@example.com" required />
+
+      <label for="booking-phone">Phone</label>
+      <input id="booking-phone" name="phone" type="tel" placeholder="+1 555 000 0000" required />
+
+      <label for="booking-message">Message</label>
+      <textarea id="booking-message" name="message" rows="4" placeholder="Write your message..."></textarea>
+
+      <div class="booking-form__actions">
+        <button type="button" id="cancel-booking-dialog">Cancel</button>
+        <button type="submit">Send</button>
+      </div>
+    </form>
+  </dialog>
+
+  <style>
+    .booking-dialog {
+      width: min(560px, calc(100vw - 2rem));
+      border: 0;
+      border-radius: 12px;
+      padding: 0;
+      overflow: hidden;
+      margin: auto;
+      max-height: calc(100vh - 2rem);
+
+      /* Animación de salida (por defecto) */
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+      transition: 
+        opacity 0.3s ease-out,
+        transform 0.3s ease-out,
+        display 0.3s ease-out allow-discrete;
+    }
+
+    .booking-dialog[open] {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Animación de entrada */
+    @starting-style {
+      .booking-dialog[open] {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+    }
+
+    .booking-dialog::backdrop {
+      background: rgba(0, 0, 0, 0);
+      transition: 
+        display 0.3s ease-out allow-discrete,
+        overlay 0.3s ease-out allow-discrete,
+        background-color 0.3s ease-out;
+    }
+
+    .booking-dialog[open]::backdrop {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    @starting-style {
+      .booking-dialog[open]::backdrop {
+        background: rgba(0, 0, 0, 0);
+      }
+    }
+
+    .booking-dialog__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #e5e7eb;
+      background: #fff;
+    }
+
+    .booking-dialog__header h3 {
+      margin: 0;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .booking-dialog__close {
+      border: 0;
+      background: transparent;
+      font-size: 1.5rem;
+      line-height: 1;
+      cursor: pointer;
+      color: #6b7280;
+    }
+
+    .booking-form {
+      display: grid;
+      gap: 0.75rem;
+      padding: 1.25rem;
+      background: #fff;
+    }
+
+    .booking-form label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #111827;
+    }
+
+    .booking-form input,
+    .booking-form textarea {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 0.625rem 0.75rem;
+      font-size: 0.95rem;
+      color: #111827;
+      background: #fff;
+    }
+
+    .booking-form input[readonly] {
+      background: #f9fafb;
+    }
+
+    .booking-form__actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+
+    .booking-form__actions button {
+      border: 0;
+      border-radius: 8px;
+      padding: 0.625rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .booking-form__actions button[type="button"] {
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .booking-form__actions button[type="submit"] {
+      background: var(--color-primary);
+      color: #fff;
+    }
+  </style>
+
+  <script>
+    
+    // Tabs del contenido
+
+    const tabsRoots = document.querySelectorAll("[data-tabs-root]");
+    const activeClasses = ["border-[var(--color-primary)]", "bg-[var(--color-primary)]", "text-white"];
+    const inactiveClasses = ["border-[#ccc]", "bg-white", "text-black"];
+
+    tabsRoots.forEach((root) => {
+      const buttons = root.querySelectorAll("[data-tab-button]");
+      const panels = root.querySelectorAll("[data-tab-panel]");
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const targetId = button.getAttribute("data-tab-target");
+
+          buttons.forEach((btn) => {
+            btn.setAttribute("aria-selected", "false");
+            btn.classList.remove(...activeClasses);
+            btn.classList.add(...inactiveClasses);
+          });
+
+          panels.forEach((panel) => {
+            panel.classList.add("hidden");
+          });
+
+          button.setAttribute("aria-selected", "true");
+          button.classList.remove(...inactiveClasses);
+          button.classList.add(...activeClasses);
+
+          const targetPanel = root.querySelector(`#${targetId}`);
+          targetPanel?.classList.remove("hidden");
+        });
+      });
+    });
+
+    // Modal de Booking
+
+    const bookingDialog = document.getElementById("booking-dialog");
+    const openBookingDialog = document.getElementById("open-booking-dialog");
+    const closeBookingDialog = document.getElementById("close-booking-dialog");
+    const cancelBookingDialog = document.getElementById("cancel-booking-dialog");
+
+    openBookingDialog?.addEventListener("click", (event) => {
+      event.preventDefault();
+      bookingDialog?.showModal();
+      document.body.style.overflow = "hidden";
+    });
+
+    closeBookingDialog?.addEventListener("click", () => {
+      bookingDialog?.close();
+    });
+
+    cancelBookingDialog?.addEventListener("click", () => {
+      bookingDialog?.close();
+    });
+
+    bookingDialog?.addEventListener("close", () => {
+      document.body.style.overflow = "";
+    });
+
+    bookingDialog?.addEventListener("click", (event) => {
+      const rect = bookingDialog.getBoundingClientRect();
+      const isInDialog =
+        rect.top <= event.clientY &&
+        event.clientY <= rect.top + rect.height &&
+        rect.left <= event.clientX &&
+        event.clientX <= rect.left + rect.width;
+
+      if (!isInDialog) {
+        bookingDialog.close();
+      }
+    });
+  </script>
+</Layout>
