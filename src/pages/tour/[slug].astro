@@ -176,6 +176,21 @@ const [data] = await res.json()
                   <li>CITY TOUR LIMA (tarde) hora de recojo 2.00 pm</li>
                   <li>Noche en hotel seleccionado. Lima</li>
                 </ul>
+                 <h2>Itinerario 3</h2>
+                <h3>Día 1: City Tour Lima</h3>
+                <ul>
+                  <li>Recepción en el aeropuerto de Lima y traslado al hotel seleccionado.</li>
+                  <li>Transporte privado.</li>
+                  <li>CITY TOUR LIMA (tarde) hora de recojo 2.00 pm</li>
+                  <li>Noche en hotel seleccionado. Lima</li>
+                </ul>
+                <h3>Día 2: Tour Full Day Paracas + Ica</h3>
+                <ul>
+                  <li>Recepción en el aeropuerto de Lima y traslado al hotel seleccionado.</li>
+                  <li>Transporte privado.</li>
+                  <li>CITY TOUR LIMA (tarde) hora de recojo 2.00 pm</li>
+                  <li>Noche en hotel seleccionado. Lima</li>
+                </ul>
               </div>
             </div>
 
@@ -358,6 +373,18 @@ const [data] = await res.json()
   </dialog>
 
   <style>
+    .tab-panel-fade {
+      transition: opacity 220ms ease;
+    }
+
+    .tab-panel-visible {
+      opacity: 1;
+    }
+
+    .tab-panel-hidden {
+      opacity: 0;
+    }
+
     .booking-dialog {
       width: min(560px, calc(100vw - 2rem));
       border: 0;
@@ -494,14 +521,28 @@ const [data] = await res.json()
     const tabsRoots = document.querySelectorAll("[data-tabs-root]");
     const activeClasses = ["border-[var(--color-primary)]", "bg-[var(--color-primary)]", "text-white"];
     const inactiveClasses = ["border-[#ccc]", "bg-white", "text-black"];
+    const tabFadeDuration = 220;
 
     tabsRoots.forEach((root) => {
       const buttons = root.querySelectorAll("[data-tab-button]");
       const panels = root.querySelectorAll("[data-tab-panel]");
 
+      panels.forEach((panel) => {
+        panel.classList.add("tab-panel-fade");
+        if (panel.classList.contains("hidden")) {
+          panel.classList.add("tab-panel-hidden");
+        } else {
+          panel.classList.add("tab-panel-visible");
+        }
+      });
+
       buttons.forEach((button) => {
         button.addEventListener("click", () => {
           const targetId = button.getAttribute("data-tab-target");
+          const targetPanel = targetId ? root.querySelector(`#${targetId}`) : null;
+          const currentPanel = Array.from(panels).find((panel) => !panel.classList.contains("hidden"));
+
+          if (!targetPanel || targetPanel === currentPanel) return;
 
           buttons.forEach((btn) => {
             btn.setAttribute("aria-selected", "false");
@@ -509,16 +550,27 @@ const [data] = await res.json()
             btn.classList.add(...inactiveClasses);
           });
 
-          panels.forEach((panel) => {
-            panel.classList.add("hidden");
-          });
-
           button.setAttribute("aria-selected", "true");
           button.classList.remove(...inactiveClasses);
           button.classList.add(...activeClasses);
 
-          const targetPanel = root.querySelector(`#${targetId}`);
-          targetPanel?.classList.remove("hidden");
+          if (currentPanel) {
+            currentPanel.classList.remove("tab-panel-visible");
+            currentPanel.classList.add("tab-panel-hidden");
+          }
+
+          window.setTimeout(() => {
+            if (currentPanel) {
+              currentPanel.classList.add("hidden");
+            }
+
+            targetPanel.classList.remove("hidden");
+            targetPanel.classList.remove("tab-panel-hidden");
+
+            requestAnimationFrame(() => {
+              targetPanel.classList.add("tab-panel-visible");
+            });
+          }, tabFadeDuration);
         });
       });
     });
